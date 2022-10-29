@@ -6,8 +6,16 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '',
+    redirect: '/home',
+  },
+  {
+    path: '/',
+    redirect: '/home',
+  },
+  {
+    path: '/home',
     name: 'home',
-    component: () => import('@/views/HomeView.vue')
+    component: () => import('@/views/HomeView/HomeView.vue')
   },
   
 ]
