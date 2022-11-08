@@ -17,7 +17,19 @@ const routes = [
     name: 'home',
     component: () => import('@/views/HomeView/HomeView.vue')
   },
-  
+  {
+    path: '/city',
+    name: 'city',
+    component: () => import('@/views/CityView/CityView.vue'),
+    children: [
+      {
+        path: 'strategy',
+        name: 'strategy',
+        component: () => import('@/views/CityView/two/CityStrategy.vue'),
+      }
+    ]
+  },
+
 ]
 
 const router = new VueRouter({
