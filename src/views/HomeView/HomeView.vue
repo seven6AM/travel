@@ -134,7 +134,6 @@
       <router-view />
     </div> 
   </van-pull-refresh>
- 
 </template>
 
 <script>

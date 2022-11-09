@@ -1,6 +1,7 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
+
   devServer:{
     proxy: {
       "/qyer": {
@@ -14,4 +15,13 @@ module.exports = defineConfig({
     },
 
   },
+
+  devServer: {
+    proxy: {
+      '': {
+        target: 'https://open.qyer.com/',
+        changeOrigin: true,
+      }
+    }
+  }
 })
