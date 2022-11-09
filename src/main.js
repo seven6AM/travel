@@ -5,6 +5,25 @@ import store from './store'
 import VueAxiosPlugin from 'vue-axios-plugin'
 import Mint from 'mint-ui'; //饿了么公司组件
 import wotui from './wotui' //京东组件
+import { List, Cell, DropdownMenu, DropdownItem, Popup, Tab, Tabs, PullRefresh } from 'vant';
+
+Vue.use(Tab);
+
+Vue.use(Tabs);
+
+Vue.use(PullRefresh);
+
+Vue.use(VueAxiosPlugin);
+
+Vue.use(List);
+
+Vue.use(Cell);
+
+Vue.use(DropdownMenu);
+
+Vue.use(DropdownItem);
+
+Vue.use(Popup);
 
 Vue.use(Mint);
 
@@ -27,26 +46,5 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import VueAxiosPlugin from 'vue-axios-plugin'
-import { List, Cell, DropdownMenu, DropdownItem, Popup } from 'vant';
 
 
-Vue.use(VueAxiosPlugin);
-Vue.use(List);
-Vue.use(Cell);
-Vue.use(DropdownMenu);
-Vue.use(DropdownItem);
-Vue.use(Popup);
-
-
-Vue.config.productionTip = false
-
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
