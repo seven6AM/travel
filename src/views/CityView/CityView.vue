@@ -3,6 +3,10 @@
     <!-- 顶部图片 -->
     <div class="top-background">
       <img :src="cityPic" />
+      <div class="choose-city" @click="goToChooseCity">
+        <p>{{city.cnname}}</p>
+        <img src="@/assets/CityView/down.svg">
+      </div>
     </div>
     <!-- 分类 -->
     <div class="icon-list">
@@ -33,7 +37,7 @@
     <CityPlay :playData="play" />
     <!-- 大家怎么玩 -->
     <CityShare />
-    <router-view></router-view>
+    <router-view @cityId='changeCity'></router-view>
   </div>
 </template>
 
@@ -52,16 +56,21 @@ export default {
       iconList: [],
       strategy: [],
       play: [],
+      cityId: '11808'
     };
   },
   created() {
-    this.$axios({
+      this.getCityData()
+  },
+  methods: {
+    getCityData() {
+      this.$axios({
       method: "get",
       url: "/qyer/place/biuCityHome",
       params: {
         v: "1",
         track_device_info: "x86_64",
-        city_id: 11808,
+        city_id: this.$route.query.id,
         track_deviceid: "530f158c-2a47-4108-acc0-ac132d1dd37a",
         track_os: "Android6.0.1",
         client_id: "qyer_android",
@@ -82,9 +91,10 @@ export default {
       this.$set(this.play[0], "img", img1);
       this.$set(this.play[1], "img", img2);
       this.$set(this.play[2], "img", img3);
-    });   
-  },
-  methods: {
+
+
+    }); 
+    },
     goToStrategyPage(id) {
       this.$router.push({
         name: 'strategy',
@@ -92,6 +102,21 @@ export default {
           id
         }
       })
+    },
+    goToChooseCity() {
+      this.$router.push(
+        `${this.$route.path}/choose-city`
+      )
+    },
+    changeCity(val) {
+      console.log(val);
+      this.cityId = val
+    }
+  },
+  watch: {
+    cityId() {
+
+      this.getCityData()
     }
   },
   components: {
@@ -111,12 +136,32 @@ export default {
   background-color: rgb(238, 244, 245);
 
   .top-background {
+    position: relative;
     width: 100vw;
     height: 135px;
 
     img {
       width: 100%;
       height: 100%;
+    }
+
+    .choose-city {
+      position: absolute;
+      top: 20px;
+      left: 15px;
+      display: flex;
+      align-items: center;
+      width: 30%;
+
+      p {
+        color: #fff;
+        margin-right: 5px;
+      }
+
+      img {
+        width: 15px;
+        height: 25px;
+      }
     }
   }
 

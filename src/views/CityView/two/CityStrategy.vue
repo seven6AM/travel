@@ -48,24 +48,59 @@
           </div>
           <!-- 分享评论icon -->
           <div class="share">
-            <img src="@/assets/CityView/share.svg" class="share-icon" />
+            <img
+              src="@/assets/CityView/share.svg"
+              class="share-icon"
+              @click="showShare = true"
+            />
             <div class="icon">
               <span>
                 <img src="@/assets/CityView/collect.svg" />
                 {{ i.collects }}
               </span>
-              <span @click="showPopup">
+              <span @click="showPopup(i.id)">
                 <img src="@/assets/CityView/comments.svg" />
                 {{ i.comments }}
               </span>
               <span>
-                <img src="@/assets/CityView/like.svg" />
+                <img src="@/assets/CityView/like.svg" v-show="!active" />
+                <!-- <img src="@/assets/CityView/redlike.svg" v-show="active" /> -->
                 {{ i.nlikes }}
               </span>
             </div>
+            <van-popup
+              v-model="showShare"
+              round
+              position="bottom"
+              :style="{ height: '20%' }"
+              :overlay-style="{ background: 'rgba(0,0,0,0.1)' }"
+            >
+              <div class="share-icon">
+                <div class="icon">
+                  <img src="@/assets/CityView/CityStrategy/wechat.svg">
+                  <p>微信</p>
+                </div>
+                <div class="icon">
+                  <img src="@/assets/CityView/CityStrategy/friends.svg">
+                  <p>朋友圈</p>
+                </div>
+                <div class="icon">
+                  <img src="@/assets/CityView/CityStrategy/weibo.svg">
+                  <p>微博</p>
+                </div>
+                <div class="icon">
+                  <img src="@/assets/CityView/CityStrategy/qq.svg">
+                  <p>QQ</p>
+                </div>
+                <div class="icon">
+                  <img src="@/assets/CityView/CityStrategy/qqSpace.svg">
+                  <p>QQ空间</p>
+                </div>
+              </div>
+            </van-popup>
           </div>
           <!-- 评论功能 -->
-          <div class="comment-list" @click="showPopup">
+          <div class="comment-list" @click="showPopup(i.id)">
             <div
               class="comment-item"
               v-for="j in i.comment_list"
@@ -76,7 +111,7 @@
             </div>
             <p>共{{ i.comments }}条评论</p>
           </div>
-          <div class="addComment">
+          <div class="addComment" @click="showPopup(i.id)">
             <img src="@/assets/CityView/avatar.svg" />
             <p>添加评论...</p>
           </div>
@@ -87,20 +122,55 @@
     <van-popup
       v-model="show"
       round
-      closeable
       position="bottom"
-      :style="{ height: '60%' }"
+      :style="{ height: '70%' }"
       :overlay-style="{ background: 'rgba(255,255,255,0)' }"
+      :lock-scroll="false"
     >
-      <h3>全部评论</h3>
+      <h3>
+        全部评论
+        <span @click="show = false">
+          <img src="@/assets/CityView/false.svg" />
+        </span>
+      </h3>
       <div class="list">
-        <div class="item" v-for="item in commentList" :key="item.comment_id"></div>
+        <div class="item" v-for="item in commentList" :key="item.comment_id">
+          <div class="item-header">
+            <div class="comment">
+              <div class="avatar">
+                <img :src="item.avatar" />
+              </div>
+              <div class="user">
+                <p class="user-name">{{ item.username }}</p>
+                <p class="date">{{ item.date }}</p>
+              </div>
+            </div>
+            <div class="icon">
+              <img src="@/assets/CityView/like.svg" />
+            </div>
+          </div>
+          <div class="content">{{ item.content }}</div>
+        </div>
+        <p class="over">-- THE END --</p>
+      </div>
+
+      <div class="additem">
+        <img class="avatar" src="@/assets/CityView/avatar.svg" />
+        <van-field v-model="value" placeholder="添加评论...">
+          <template #button>
+            <van-button size="small" type="primary" @click="addItem(value)"
+              >发送</van-button
+            >
+          </template>
+        </van-field>
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
+import minePic from "@/assets/CityView/mine.jpg";
+
 export default {
   data() {
     return {
@@ -115,16 +185,19 @@ export default {
       updata: {
         client_id: "qyer_android",
         client_secret: "9fcaae8aefc4f9ac4915",
-        id: "277",
+        id: "",
         page: "1",
       },
-      // showAll: false,
       unfold: [],
       show: false,
       commentList: [],
+      value: "",
+      showShare: false,
+      active: false,
     };
   },
   created() {
+    this.updata.id = this.$route.query.id;
     this.getData();
   },
   methods: {
@@ -147,6 +220,7 @@ export default {
         this.list = this.list.concat(list);
       });
     },
+    // 返回上一页
     back() {
       this.$router.go(-1);
     },
@@ -155,6 +229,7 @@ export default {
       this.exchangeButton = !this.exchangeButton;
     },
     onLoad() {
+      this.updata.id = this.$route.query.id;
       this.updata.page++;
       this.getData();
     },
@@ -180,26 +255,44 @@ export default {
       }
     },
     // 展示全部评论
-    showPopup() {
+    showPopup(id) {
       this.show = true;
-      this.getComment()
+      this.getComment(id);
     },
     // 请求全部评论
-    getComment() {
+    getComment(id) {
       this.$axios({
         url: "/qyer/fugc/comment/list",
         post: "get",
         params: {
           client_id: "qyer_android",
           client_secret: "9fcaae8aefc4f9ac4915",
-          post_id: 376268,
+          post_id: id,
           page: 1,
         },
-      }).then(({data}) => {
+      }).then(({ data }) => {
         console.log(data.data.list);
-        this.commentList = data.data.list
-      })
+        this.commentList = data.data.list;
+      });
     },
+    // 添加评论
+    addItem(val) {
+      let time = new Date();
+      let mon = time.getMonth() + 1;
+      let day = time.getDate();
+      let newItem = {
+        avatar: minePic,
+        username: "The forest",
+        date: mon + "-" + day,
+        content: val,
+      };
+      this.commentList.push(newItem);
+      this.value = "";
+      console.log(this.commentList);
+    },
+    // showShareFun() {
+    //   this.showShare
+    // }
   },
   watch: {
     introduce: function () {
@@ -263,7 +356,7 @@ export default {
     overflow: hidden;
     font-size: 18px;
     color: #666;
-    margin-top: 20px;
+    // margin-top: 20px;
 
     .intro-content {
       width: 100vw;
@@ -298,7 +391,7 @@ export default {
     color: #666;
     position: relative;
     overflow: hidden;
-    margin-top: 20px;
+    // margin-top: 20px;
 
     .intro-content {
       //最大高度设为3倍的行间距
@@ -380,14 +473,14 @@ export default {
 
         .username {
           display: flex;
-          justify-content: space-evenly;
           align-items: center;
-          width: 35%;
+          width: 50%;
 
           .avatar {
             width: 30px;
             height: 30px;
             border-radius: 999px;
+            margin: 0 15px;
           }
 
           h4 {
@@ -502,6 +595,33 @@ export default {
           align-items: center;
           width: 45%;
         }
+
+        .van-popup {
+          padding: 20px 0;
+          .share-icon {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100vw;
+
+            .icon {
+              display: flex;
+              flex-direction: column;
+              width: 25%;
+              margin-bottom: 15px;
+
+              img {
+                width: 40px;
+                height: 40px;
+              }
+
+              p {
+                font-size: 13px;
+                font-weight: 600;
+                margin-top: 7px;
+              }
+            }
+          }
+        }
       }
 
       .comment-list {
@@ -549,10 +669,135 @@ export default {
 
   .van-popup {
     h3 {
+      position: sticky;
+      top: 0;
+      left: 0;
       padding: 15px;
       border-bottom: 1px solid #ccc;
       font-size: 20px;
       text-align: center;
+      background-color: #fff;
+
+      span {
+        position: absolute;
+        top: 13px;
+        right: 20px;
+        width: 25px;
+        height: 25px;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .list {
+      margin-bottom: 65px;
+      .item {
+        .item-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 92vw;
+          margin: 0 auto;
+
+          .comment {
+            display: flex;
+            align-items: center;
+            width: 50%;
+
+            .avatar {
+              width: 30px;
+              height: 30px;
+              border-radius: 999px;
+              overflow: hidden;
+
+              img {
+                width: 100%;
+                height: 100%;
+              }
+            }
+
+            .user {
+              display: flex;
+              flex-direction: column;
+              width: 60%;
+              padding-left: 15px;
+
+              .user-name {
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 5px;
+              }
+
+              .date {
+                font-size: 13px;
+                color: rgba(0, 0, 0, 0.655);
+              }
+            }
+          }
+
+          .icon {
+            width: 20px;
+            height: 20px;
+
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+
+        .content {
+          width: 80vw;
+          padding-left: 5vw;
+          margin: 0 auto;
+          font-size: 14px;
+          line-height: 18px;
+        }
+      }
+
+      .over {
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+        color: rgb(172, 171, 171);
+        font-weight: 600;
+      }
+    }
+
+    .additem {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      width: 100vw;
+      height: 55px;
+      background-color: #fff;
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .van-field {
+        border: 1px solid black;
+        border-radius: 999px;
+        width: 83vw;
+        padding: 5px 13px;
+
+        .van-button {
+          width: 40px;
+          height: 30px;
+          padding: 0 5px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          background-color: pink;
+        }
+      }
     }
   }
 }
