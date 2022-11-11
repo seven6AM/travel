@@ -44,6 +44,7 @@ export default {
   left: 0;
   width: 100vw;
   height: 55px;
+  z-index: 900;
   background-color: #fff;
 
   .tabbar-item {
