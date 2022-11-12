@@ -5,9 +5,19 @@ import store from './store'
 import VueAxiosPlugin from 'vue-axios-plugin'
 import Mint from 'mint-ui'; //饿了么公司组件
 import wotui from './wotui' //京东组件
-import { List, Cell, DropdownMenu, DropdownItem, Popup, Tab, Tabs, PullRefresh } from 'vant';
+import { List, Cell, DropdownMenu, DropdownItem, Popup, Tab, Tabs, PullRefresh,Calendar,Swipe, SwipeItem } from 'vant';
 
 Vue.use(Tab);
+
+Vue.use(Cell);
+
+Vue.use(Calendar);
+
+Vue.use(Swipe);
+
+Vue.use(SwipeItem);
+
+Vue.use(List);
 
 Vue.use(Tabs);
 

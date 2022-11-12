@@ -7,16 +7,16 @@
     <div class="home">
       <div class="home-nav">
         <!-- 搜索框 -->
-        <div class="search">
+        <div class="search" @click="gottoHomeSearch">
           <div class="home-search">
             <img src="@/assets/img/search.svg" alt="搜索" />
-            <input class="shadow" type="text" placeholder="placeholder" />
+            <input class="shadow" type="text" placeholder="点击进入搜索页面" />
           </div>
         </div>
       </div>
       <!-- 搜索下的导航栏 -->
       <div class="home-list">
-        <div class="nav-item" v-for="(c) in tabList" :key="c.cnname">
+        <div class="nav-item" v-for="c in tabList" :key="c.cnname">
           <img @click="gottoHotel(c.cnname)" :src="c.pic" :alt="c.cnname" />
           <p>{{ c.cnname }}</p>
         </div>
@@ -37,7 +37,7 @@
       <!-- 轮播图下的标题及内容 -->
       <div class="home-title">
         <div class="title">
-          <van-tabs class="vant-tab-wrap" swipeable v-model="active"  >
+          <van-tabs class="vant-tab-wrap" swipeable v-model="active">
             <!-- 关注块 -->
             <van-tab title="关注">
               <div class="follow">
@@ -45,17 +45,17 @@
                   <span>关注TA们,发现有趣好内容</span>
                   <p>更多></p>
                 </div>
-                <div class="follow-usname" v-for="c in followlist" :key="c.uid">
-                  <img :src="c.avatar" alt="" />
-                  <div class="follow-title">
+                <div class="follow-usname" v-for="c in followlist" :key="c.uid"  >
+                  <img :src="c.avatar" alt=""  />
+                  <div class="follow-title" @click="gottoFollowHomePage(c.uid)">
                     <p>{{ c.username }}</p>
                     <span>{{ c.bio }}</span>
                   </div>
                   <div class="follow-item">
                     <p>+关注</p>
                   </div>
-                  <div class="follow-pic">
-                    <div class="follow-pic-list">
+                  <div class="follow-pic" >
+                    <div class="follow-pic-list" @click="gottoFollow(c.uid)">
                       <img :src="c.bius[0].cover" alt="" />
                       <img :src="c.bius[1].cover" alt="" />
                       <div class="follow-pic-item">
@@ -65,6 +65,36 @@
                     </div>
                   </div>
                 </div>
+                <van-list
+                  v-model="loading"
+                  :finished="finished"
+                  finished-text="没有更多了"
+                  @load="onLoad"
+                  offset="300"
+                >
+                  <van-cell v-for="(item) in articleList" :key="item.id" >
+                    <div class="follow-usname" >
+                      <img :src="item.avatar" alt=""/>
+                      <div class="follow-title" @click="gottoFollowHomePage(c.uid)">
+                        <p>{{ item.username }}</p>
+                        <span>{{ item.bio }}</span>
+                      </div>
+                      <div class="follow-item">
+                        <p>+关注</p>
+                      </div>
+                      <div class="follow-pic" >
+                        <div class="follow-pic-list"  @click="gottoFollow(item.id)">
+                          <img :src="item.bius[0].cover" alt="" />
+                          <img :src="item.bius[1].cover" alt="" />
+                          <div class="follow-pic-item">
+                            <img src="@/assets/img/likes.svg" alt="" />
+                            <p>{{ item.bius[0].likes }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </van-cell>
+                </van-list>
               </div>
             </van-tab>
             <!-- 发现块 -->
@@ -84,6 +114,30 @@
                     </div>
                   </div>
                 </div>
+                <van-list
+                  v-model="loading"
+                  :finished="finished"
+                  finished-text="没有更多了"
+                  @load="onLoad"
+                  offset="300"
+                >
+                  <van-cell v-for="c in listItem" :key="c.id">
+                    <div class="title-list">
+                      <img :src="c.cover" />
+                      <div class="title-item">
+                        <span>{{ c.title }}</span>
+                      </div>
+                      <div class="title-usname">
+                        <img :src="c.avator" alt= />
+                        <p>{{ c.username }}</p>
+                        <div class="title-likes">
+                          <img src="@/assets/img/likesActive.svg" alt="" />
+                          <span>{{ c.likes }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </van-cell>
+                </van-list>
               </div>
             </van-tab>
             <!-- 声音旅行块 -->
@@ -107,6 +161,30 @@
                     </div>
                   </div>
                 </div>
+                <van-list
+                  v-model="loading"
+                  :finished="finished"
+                  finished-text="没有更多了"
+                  @load="onLoad"
+                  offset="300"
+                >
+                  <van-cell v-for="c in listItemList" :key="c.tag_id">
+                    <div class="title-list">
+                      <img :src="c.cover" />
+                      <div class="title-item">
+                        <span>{{ c.title }}</span>
+                      </div>
+                      <div class="title-usname">
+                        <img :src="c.avator" alt="" />
+                        <p>{{ c.username }}</p>
+                        <div class="title-likes">
+                          <img src="@/assets/img/likesActive.svg" alt="" />
+                          <span>{{ c.likes }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </van-cell>
+                </van-list>
               </div>
             </van-tab>
             <!-- 视频块 -->
@@ -126,13 +204,37 @@
                     </div>
                   </div>
                 </div>
+                <van-list
+                  v-model="loading"
+                  :finished="finished"
+                  finished-text="没有更多了"
+                  @load="onLoad"
+                  offset="300"
+                >
+                  <van-cell v-for="c in list" :key="c.tag_id">
+                    <div class="title-list">
+                      <img :src="c.cover" />
+                      <div class="title-item">
+                        <span>{{ c.title }}</span>
+                      </div>
+                      <div class="title-usname">
+                        <img :src="c.avator" alt="" />
+                        <p>{{ c.username }}</p>
+                        <div class="title-likes">
+                          <img src="@/assets/img/likesActive.svg" alt="" />
+                          <span>{{ c.likes }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </van-cell>
+                </van-list>
               </div>
             </van-tab>
           </van-tabs>
         </div>
       </div>
       <router-view />
-    </div> 
+    </div>
   </van-pull-refresh>
 </template>
 
@@ -152,24 +254,21 @@ export default {
       followlist: [], //关注内容
       listItem: [], //发现内容
       listItemList: [], //声音旅行内容
-      articleList: [],
       count: 0,
       isLoading: false,
       loading: false,
       finished: false,
-      page: 1, //请求第几页
+      page: 2, //请求第几页
       pageSize: 10, //每页请求的数量
       total: 0, //总共的数据条数
-      itemList: [],
+      articleList: [],
       active: 2,
     };
   },
 
-  created() {
-    //创建组件时，加载第1页数据
-    this.getroadList();
-  },
+  created() {},
   mounted() {
+    this.onLoad(); //数据下拉加载
     this.gethomepage(); //数据请求
   },
 
@@ -212,48 +311,69 @@ export default {
         });
     },
 
-    getroadList() {
-      this.$axios
-        .get(
-          "/qyer/fugc/post/home?client_id=qyer_android&client_secret=9fcaae8aefc4f9ac4915&track_app_version=9.50&tag_id=116663&page=1"
-        )
-        //视频
-        .then(({ data }) => {
-          let rows = data.data.list;
-
-          this.list = data.data.list; //视频内容
-
-          this.loading = false;
-          this.total = data.data.list.total;
-
-          if ((rows = null || rows.length === 0)) {
-            //加载结束
-            this.finished = true;
-            return;
-          }
-          //合并新老数据
-          this.list = this.list.concat(rows);
-
-          //数据条数>=总条数，不再触发
-          if (this.list.length >= this.total) {
-            this.finished = true;
-          }
-        });
+    //跳转路由到搜索框页面
+    gottoHomeSearch() {
+      this.$router.push({
+        name:'search',
+      })
     },
 
-    gottoHotel(id) {
+    //跳转路由到关注块的个人主页
+    gottoFollowHomePage(id) {
       this.$router.push({
-        name:"hotel",
+        name:'page',
         query: {
           id
         }
       })
     },
 
-    //上拉加载数据
-    onLoad() {
-      this.page++;
-      this.getroadList();
+    //跳转路由到关注块详情页面
+    gottoFollow(id) {
+      this.$router.push({
+        name:'follow',
+        query: {
+          id
+        },
+      })
+    },
+
+    //跳转路由到订酒店
+    gottoHotel(id) {
+      this.$router.push({
+        name: "hotel",
+        query: {
+          id,
+        },
+      });
+    },
+
+    //下拉加载数据
+    async onLoad() {
+      const res = await this.$axios.get(
+        "/qyer/fugc/post/ufollowtab?client_id=qyer_android&client_secret=9fcaae8aefc4f9ac4915"
+      );
+      // 获取的数据
+      const arr = res.data.data.followlist; // 它是一个数组
+      // 1. 追加数据到list
+      //    对数组进行展开
+      this.articleList.push(...arr);
+      // 2. 把loading设置为false
+      this.loading = false;
+      // 3. 判断是否所有的数据全部加载完成，如果是：finished设为true
+      if (arr.length === 0) {
+        // 说明取不到数据了
+        this.finished = true;
+        this.loading = false;
+      }
+
+      // 加载状态结束
+      this.loading = false;
+
+      // 数据全部加载完成
+      if (this.articleList.length >= 400) {
+        this.finished = true;
+      }
     },
 
     //下拉刷新
@@ -282,7 +402,6 @@ export default {
   background-color: rgb(251, 246, 246);
   width: 100vw;
   overflow: hidden;
-
 
   .home-nav {
     width: 100vw;
@@ -489,8 +608,9 @@ export default {
       .follow-pic-list {
         display: flex;
         img {
-          margin-right: 10px;
-          width: 220px;
+          margin-right: 5px;
+          margin-top: 5px;
+          width: 190px;
           height: 300px;
           border-radius: 10px;
         }
@@ -498,8 +618,8 @@ export default {
           display: flex;
           align-items: center;
           position: absolute;
-          bottom: 5px;
-          left: 160px;
+          bottom: 10px;
+          left: 135px;
 
           img {
             width: 20px;
@@ -518,8 +638,7 @@ export default {
 </style>
 
 <style lang="scss">
-
-.van-tabs__nav  {
+.van-tabs__nav {
   display: flex;
   justify-content: space-around;
   padding: 10px 0 10px 0;
@@ -530,8 +649,11 @@ export default {
   }
 }
 
-
-
-
+.van-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  justify-content: space-around;
+}
 </style>
 
