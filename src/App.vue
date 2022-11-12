@@ -5,17 +5,17 @@
         <p>首页</p>
         <span></span>
       </router-link>
-      <router-link class="tabbar-item" tag="div" to="/city">
+      <router-link class="tabbar-item" tag="div" to="/city?id=11808">
         <p>城市</p>
         <span></span>
       </router-link>
-      <router-link class="tabbar-item" tag="div" to="/biu">
+      <!-- <router-link class="tabbar-item" tag="div" to="/biu">
         <p>Biu!</p>
-      </router-link>
-      <router-link class="tabbar-item" tag="div" to="/shop">
+      </router-link> -->
+      <!-- <router-link class="tabbar-item" tag="div" to="/shop">
         <p>商城</p>
         <span></span>
-      </router-link>
+      </router-link> -->
       <router-link class="tabbar-item" tag="div" to="/mine">
         <p>我的</p>
         <span></span>

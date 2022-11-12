@@ -75,7 +75,34 @@ const routes = [
         path: 'strategy',
         name: 'strategy',
         component: () => import('@/views/CityView/two/CityStrategy.vue'),
-      }
+      },
+      {
+        path: 'palace',
+        name: 'palace',
+        component: () => import('@/views/CityView/two/CityPalace.vue'),
+        children: [
+          {
+            path: 'check',
+            name: 'check',
+            component: () => import('@/views/CityView/three/PalaceCheck.vue'),
+          },
+          {
+            path: 'ask',
+            name: 'ask',
+            component: () => import('@/views/CityView/three/PalaceAsk.vue'),
+          }
+        ]
+      },
+      {
+        path: 'biu',
+        name: 'biu',
+        component: () => import('@/views/CityView/two/CityBiu.vue'),
+      },
+      {
+        path: 'choose-city',
+        name: 'choose-city',
+        component: () => import('@/views/CityView/two/CityChoose.vue'),
+      },
     ]
   },
 

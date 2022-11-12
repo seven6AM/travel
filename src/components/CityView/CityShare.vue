@@ -1,8 +1,8 @@
 <template>
   <div class="share">
     <div class="title">大家怎么玩</div>
-    <div class="tab-show">
-      <div class="tab">
+    <!-- <div class="tab-show"> -->
+      <!-- <div class="tab">
         <span :class="{ active: type == '1' }">热门</span>
         <span :class="{ active: type == '2' }">最新</span>
         <span :class="{ active: type == '3' }"><i>#</i> 线路推荐</span>
@@ -10,7 +10,7 @@
         <span :class="{ active: type == '5' }"><i>#</i> 走!去探店</span>
         <span :class="{ active: type == '6' }"><i>#</i> 亲子游</span>
       </div>
-    </div>
+    </div> -->
     <div class="content">
       <van-list
         v-model="loading"
@@ -19,7 +19,12 @@
         :immediate-check="false"
         @load="onLoad"
       >
-        <div class="item" v-for="(i,index) in shareList" :key="index">
+        <div
+          class="item"
+          v-for="(i, index) in shareList"
+          :key="index"
+          @click="goToCityBiu(i.id)"
+        >
           <img :src="i.cover" class="cover" />
           <div class="text">
             <p>{{ i.title }}</p>
@@ -86,23 +91,20 @@ export default {
           this.finished = true; // 加载结束
           return;
         }
-        this.shareList = this.shareList.concat(list)
-
-        // for (let i=0;i< list.length;i++) {
-        //   let item = list[i]
-        //   for (let j=0;j< this.shareList.length;j++) {
-        //     if (item.id == this.shareList[j].id) {
-        //       return
-        //     } else {
-        //       this.shareList.push(item)
-        //     }
-        //   }
-        // }
+        this.shareList = this.shareList.concat(list);
       });
     },
     onLoad() {
       this.updata.page++;
       this.getList();
+    },
+    goToCityBiu(id) {
+      this.$router.push({
+        name: "biu",
+        query: {
+          id
+        },
+      });
     },
   },
 };
@@ -162,85 +164,94 @@ export default {
 
   .content {
     // display: flex;
-    // justify-content: space-evenly;
+    // // justify-content: space-evenly;
     // flex-wrap: wrap;
-    width: 100vw;
+    // width: 100vw;
+    // margin-top: 15px;
+    // padding: 0 2vw;
+    // column-count: 2; //想要排成的列数
+    // column-gap: 2vw;
     margin-top: 15px;
-    padding: 0 2vw;
-    column-count: 2; //想要排成的列数
-    column-gap: 2vw;
 
-    .item {
-      position: relative;
-      width: 47vw;
-      margin-bottom: 10px;
+    .van-list {
+      display: flex;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      width: 100vw;
 
-      .cover {
-        width: 100%;
-        border-radius: 7px;
-      }
+      .item {
+        position: relative;
+        width: 47vw;
+        margin-bottom: 10px;
 
-      .text {
-        padding: 5px 7px;
-
-        p {
-          font-size: 14px;
-          line-height: 22px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-        }
-
-        .author {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 10px;
-
-          .user {
-            display: flex;
-            align-items: center;
-
-            .photo {
-              width: 20px;
-              height: 20px;
-              border-radius: 999px;
-              margin-right: 5px;
-            }
-
-            .username {
-              font-size: 14px;
-              color: rgb(147, 147, 147);
-            }
-          }
-
-          .like-num {
-            display: flex;
-            align-items: center;
-
-            .like {
-              width: 15px;
-              height: 15px;
-              margin-right: 5px;
-            }
-          }
-        }
-      }
-
-      .voice {
-        position: absolute;
-        top: 7px;
-        right: 7px;
-        width: 14px;
-        height: 14px;
-        border-radius: 999px;
-        background-color: #fff;
-
-        img {
+        .cover {
           width: 100%;
-          height: 100%;
+          height: 258px;
+          border-radius: 7px;
+        }
+
+        .text {
+          padding: 5px 7px;
+
+          p {
+            font-size: 14px;
+            line-height: 22px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+
+          .author {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+
+            .user {
+              display: flex;
+              align-items: center;
+
+              .photo {
+                width: 20px;
+                height: 20px;
+                border-radius: 999px;
+                margin-right: 5px;
+              }
+
+              .username {
+                font-size: 14px;
+                color: rgb(147, 147, 147);
+              }
+            }
+
+            .like-num {
+              display: flex;
+              align-items: center;
+
+              .like {
+                width: 15px;
+                height: 15px;
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+
+        .voice {
+          position: absolute;
+          top: 7px;
+          right: 7px;
+          width: 14px;
+          height: 14px;
+          border-radius: 999px;
+          background-color: #fff;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
         }
       }
     }

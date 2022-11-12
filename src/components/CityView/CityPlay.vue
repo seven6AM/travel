@@ -2,7 +2,7 @@
   <div class="play">
     <h3>去哪玩</h3>
     <div class="content">
-      <div class="item" v-for="i in playData" :key="i.id">
+      <div class="item" v-for="i in playData" :key="i.id" @click="goToPalace(i.id)">
         <div class="photo">
           <img :src="i.photo" />
         </div>
@@ -15,7 +15,7 @@
           <p class="people">{{i.desc}}</p>
         </div>
       </div>
-      <div class="all">查看全部 ></div>
+      <!-- <div class="all">查看全部 ></div> -->
     </div>
   </div>
 </template>
@@ -28,6 +28,16 @@ export default {
   props: {
     playData: Array,
   },
+  methods: {
+    goToPalace(id) {
+      this.$router.push({
+        name: 'palace',
+        query: {
+          id
+        }
+      })
+    }
+  }
 };
 </script>
 
