@@ -6,9 +6,17 @@ import VueAxiosPlugin from 'vue-axios-plugin'
 import Mint from 'mint-ui'; //饿了么公司组件
 import wotui from './wotui' //京东组件
 import vant from './vant' //vant2.0组件
-import { Cell } from "vant";
+import { Cell, List, Calendar,Swipe, SwipeItem } from "vant";
 
-Vue.use(Cell); 
+Vue.use(Cell);
+
+Vue.use(Calendar);
+
+Vue.use(Swipe);
+
+Vue.use(SwipeItem);
+
+Vue.use(List);
 
 Vue.use(vant)
 
